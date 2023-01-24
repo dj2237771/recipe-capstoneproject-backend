@@ -52,4 +52,9 @@ async function getRecipeAPIHandler(req, res) {
   res.send(allRecipe.data);
 }
 
-module.exports = { getRecipeAPIHandler };
+async function getFavRecipeHandler(req, res) {
+  let allFavRecipe = await recipeModel.find({});
+  res.send(allFavRecipe);
+}
+
+module.exports = { getRecipeAPIHandler, getFavRecipeHandler };

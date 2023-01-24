@@ -7,8 +7,8 @@ const recipesHandler = require("../controllers/recipeRoutesHandler");
 // GET: localhost:3001/recipeapi
 recipeRouter.get("/recipeapi", recipesHandler.getRecipeAPIHandler);
 
-// // GET: localhost:3001/favrecipe
-// recipeRouter.get("/favrecipe", recipesHandler.getFavRecipeHandler);
+// GET: localhost:3001/favrecipe
+recipeRouter.get("/favrecipe", recipesHandler.getFavRecipeHandler);
 
 // // post: localhost:3001/favrecipe
 // recipeRouter.post("/favrecipe", digimonHandlers.addFavRecipeHandler);
