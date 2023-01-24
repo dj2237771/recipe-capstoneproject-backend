@@ -53,8 +53,89 @@ async function getRecipeAPIHandler(req, res) {
 }
 
 async function getFavRecipeHandler(req, res) {
-  let allFavRecipe = await recipeModel.find({});
+  let allFavRecipe = await recipeModel.find({ userName: userName });
   res.send(allFavRecipe);
 }
 
-module.exports = { getRecipeAPIHandler, getFavRecipeHandler };
+async function addFavRecipeHandler(req, res) {
+  const {
+    userName,
+    recipeName,
+    calories,
+    diet,
+    health,
+    cuisin,
+    meal,
+    dish,
+    ingredients,
+    image,
+    source,
+    sourceurl,
+  } = req.body;
+  let newRecipe = await recipeModel.create({
+    userName: userName,
+    recipeName: recipeName,
+    calories: calories,
+    dietLabels: diet,
+    healthLabels: health,
+    cuisineType: cuisin,
+    mealType: meal,
+    dishType: dish,
+    ingredientLines: ingredients,
+    image: image,
+    source: source,
+    sourceURL: sourceurl,
+  });
+  res.send(newRecipe);
+}
+
+async function updateFavRecipeHandler(req, res) {
+  const id = req.params.id;
+  const {
+    recipeName,
+    calories,
+    diet,
+    health,
+    cuisin,
+    meal,
+    dish,
+    ingredients,
+    image,
+    source,
+    sourceurl,
+  } = req.body;
+  await recipeModel.findByIdAndUpdate(id, {
+    recipeName,
+    calories,
+    diet,
+    health,
+    cuisin,
+    meal,
+    dish,
+    ingredients,
+    image,
+    source,
+    sourceurl,
+  });
+  let allRecipe = await recipeModel.find({});
+  console.log(allRecipe);
+  res.send(allRecipe);
+}
+
+async function deleteFavRecipeHandler(req, res) {
+  const { id } = req.params;
+  await recipeModel.findByIdAndDelete(id);
+  let allRecipe = await recipeModel.find({});
+  res.send(allRecipe);
+}
+async function getAllRecipe() {
+  let allRecipe = await recipeModel.find({});
+  return allRecipe;
+}
+module.exports = {
+  getRecipeAPIHandler,
+  getFavRecipeHandler,
+  addFavRecipeHandler,
+  updateFavRecipeHandler,
+  deleteFavRecipeHandler,
+};

@@ -3,6 +3,7 @@
 const mongoose = require("./index");
 
 const recipeSchema = new mongoose.Schema({
+  userName: String,
   recipeName: String,
   calories: Number,
   dietLabels: [String],
