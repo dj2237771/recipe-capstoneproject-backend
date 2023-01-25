@@ -2,6 +2,7 @@
 
 const axios = require("axios");
 const recipeModel = require("../models/recipeModel");
+const superagent = require("superagent");
 
 async function getRecipeAPIHandler(req, res) {
   const QUEERY = await req.body.queery;
@@ -48,8 +49,30 @@ async function getRecipeAPIHandler(req, res) {
   let allRecipe = await axios.get(
     `https://api.edamam.com/api/recipes/v2?type=public&q=${QUEERY}&app_id=${ID}&app_key=${KEY}${diet}${health}${cuisine}${meal}${dish}`
   );
-  console.log(allRecipe.data);
-  res.send(allRecipe.data);
+  let recipeString = allRecipe.data.hits;
+  // allRecipe.data.hits[0].recipe.label;
+  let recipeObjList = [];
+  recipeString.forEach((recipeModel) => {
+    const recipeObj = new Recipe(recipeModel);
+    return recipeObjList.push(recipeObj);
+  });
+  res.send(recipeObjList);
+  // console.log(JSON.stringify(allRecipe.data));
+}
+class Recipe {
+  constructor(data) {
+    this.label = data.recipe.label;
+    this.calories = data.recipe.calories;
+    this.dietLabels = data.recipe.dietLabels;
+    this.healthLabels = data.recipe.healthLabels;
+    this.cuisineType = data.recipe.cuisineType;
+    this.mealType = data.recipe.mealType;
+    this.dishType = data.recipe.dishType;
+    this.ingredientLines = data.recipe.ingredientLines;
+    this.image = data.recipe.image;
+    this.source = data.recipe.source;
+    this.sourceURL = data.recipe.url;
+  }
 }
 
 async function getFavRecipeHandler(req, res) {
@@ -132,6 +155,7 @@ async function getAllRecipe() {
   let allRecipe = await recipeModel.find({});
   return allRecipe;
 }
+
 module.exports = {
   getRecipeAPIHandler,
   getFavRecipeHandler,
