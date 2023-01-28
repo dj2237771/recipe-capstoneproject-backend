@@ -5,14 +5,19 @@ const recipeModel = require("../models/recipeModel");
 const superagent = require("superagent");
 
 async function getRecipeAPIHandler(req, res) {
+  console.log(req.body);
   const QUEERY = await req.body.queery;
 
   // Looking at the body and sending api request acourding to the paremters defined by the request.
   const dietType = await req.body.diet;
+  let dietArr = [];
   let diet = "";
   if (typeof dietType !== "undefined" && dietType !== "") {
-    diet = `&diet=${req.body.diet}`;
+    dietType.forEach((item) => {
+      dietArr.push(`&diet=${item}`);
+    });
   }
+  diet = dietArr.join("");
 
   // Passing multyple parameters into api request eg  "health": [ "sugar-conscious","kidney-friendly","DASH", "dairy-free" ]
   const healthType = await req.body.health;
@@ -76,6 +81,7 @@ class Recipe {
 }
 
 async function getFavRecipeHandler(req, res) {
+  const userName = req.query.username;
   let allFavRecipe = await recipeModel.find({ userName: userName });
   res.send(allFavRecipe);
 }
@@ -83,62 +89,58 @@ async function getFavRecipeHandler(req, res) {
 async function addFavRecipeHandler(req, res) {
   const {
     userName,
-    recipeName,
+    label,
     calories,
-    diet,
-    health,
-    cuisin,
-    meal,
-    dish,
-    ingredients,
+    dietLabels,
+    healthLabels,
+    cuisineType,
+    mealType,
+    dishType,
+    ingredientLines,
     image,
     source,
-    sourceurl,
+    sourceURL,
   } = req.body;
   let newRecipe = await recipeModel.create({
     userName: userName,
-    recipeName: recipeName,
+    recipeName: label,
     calories: calories,
-    dietLabels: diet,
-    healthLabels: health,
-    cuisineType: cuisin,
-    mealType: meal,
-    dishType: dish,
-    ingredientLines: ingredients,
+    dietLabels: dietLabels,
+    healthLabels: healthLabels,
+    cuisineType: cuisineType,
+    mealType: mealType,
+    dishType: dishType,
+    ingredientLines: ingredientLines,
     image: image,
     source: source,
-    sourceURL: sourceurl,
+    sourceURL: sourceURL,
   });
   res.send(newRecipe);
 }
 
 async function updateFavRecipeHandler(req, res) {
-  const id = req.params.id;
+  console.log("updateFavRecipeHandler");
+
+  const { id } = req.params;
   const {
     recipeName,
     calories,
-    diet,
-    health,
-    cuisin,
-    meal,
-    dish,
-    ingredients,
-    image,
-    source,
-    sourceurl,
+    dietLabels,
+    healthLabels,
+    cuisineType,
+    mealType,
+    dishType,
+    ingredientLines,
   } = req.body;
   await recipeModel.findByIdAndUpdate(id, {
-    recipeName,
-    calories,
-    diet,
-    health,
-    cuisin,
-    meal,
-    dish,
-    ingredients,
-    image,
-    source,
-    sourceurl,
+    recipeName: req.body.recipeName,
+    calories: req.body.calories,
+    dietLabels: req.body.dietLabels,
+    healthLabels: req.body.healthLabels,
+    cuisineType: req.body.cuisineType,
+    mealType: req.body.mealType,
+    dishType: req.body.dishType,
+    ingredientLines: req.body.ingredientLines,
   });
   let allRecipe = await recipeModel.find({});
   console.log(allRecipe);
